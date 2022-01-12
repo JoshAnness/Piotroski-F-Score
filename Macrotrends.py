@@ -21,9 +21,7 @@ def getData(ticker):
 
     return df
 
-df = getData("AAPL")
-
-def getROA():
+def getROA(df):
     roa = df.iloc[0]['Return on Assets']
     roa = float(roa.strip('%'))
     if roa > 0:
@@ -31,7 +29,7 @@ def getROA():
     else:
         return 0
 
-def changeInROA():
+def changeInROA(df):
     roa = df.iloc[0]['Return on Assets']
     roaOld = df.iloc[1]['Return on Assets']
     roa = float(roa.strip('%'))
@@ -40,4 +38,3 @@ def changeInROA():
         return 1
     else:
         return 0
-    
