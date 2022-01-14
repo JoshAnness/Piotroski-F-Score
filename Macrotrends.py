@@ -5,9 +5,12 @@ import numpy as np
 from bs4 import BeautifulSoup as soup
 from urllib.request import Request, urlopen
 import yfinance as yf
+from re import sub
+from decimal import Decimal
 
 headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0'}
 
+#ROA
 def getData(ticker):
     companyName = yf.Ticker(ticker)
     companyName = companyName.info['shortName']
@@ -38,3 +41,90 @@ def changeInROA(df):
         return 1
     else:
         return 0
+
+#Shares Outstanding
+def getSharesOutstanding(ticker):
+    companyName = yf.Ticker(ticker)
+    companyName = companyName.info['shortName']
+    c = companyName.split(" ")
+    url = 'https://www.macrotrends.net/stocks/charts/' + ticker.upper() + '/' + c[0] + '/shares-outstanding'
+    response = Request(url, headers = headers)
+    webpage = urlopen(response).read()
+    table = pd.read_html(webpage, match='Annual Shares Outstanding')
+    df = pd.DataFrame(np.concatenate(table))
+    df.columns = ['Date', 'Shares']
+    SO0 = df.iloc[0][1]
+    SO1 = df.iloc[1][1]
+
+    if SO0 <= SO1:
+        return 1
+    else:
+        return 0
+
+def getNetRevenue(ticker):
+    companyName = yf.Ticker(ticker)
+    companyName = companyName.info['shortName']
+    c = companyName.split(" ")
+    url = 'https://www.macrotrends.net/stocks/charts/' + ticker.upper() + '/' + c[0] + '/revenue'
+    response = Request(url, headers = headers)
+    webpage = urlopen(response).read()
+    table = pd.read_html(webpage, match='Annual Revenue')
+    df = pd.DataFrame(np.concatenate(table))
+    df.columns = ['Date', 'Net Revenue']
+    NR0 = df.iloc[0][1]
+    NR1 = df.iloc[1][1]
+    NR = [NR0, NR1]
+
+    return NR
+
+def getCOGS(ticker):
+    companyName = yf.Ticker(ticker)
+    companyName = companyName.info['shortName']
+    c = companyName.split(" ")
+    url = 'https://www.macrotrends.net/stocks/charts/' + ticker.upper() + '/' + c[0] + '/cost-goods-sold'
+    response = Request(url, headers = headers)
+    webpage = urlopen(response).read()
+    table = pd.read_html(webpage, match='Annual Cost of Goods Sold')
+    df = pd.DataFrame(np.concatenate(table))
+    df.columns = ['Date', 'COGS']
+    COGS0 = df.iloc[0][1]
+    COGS1 = df.iloc[1][1]
+    COGS = [COGS0, COGS1]
+
+    return COGS
+
+def getGrossMargin(NR, COGS):
+    NR0 = Decimal(sub(r'[^\d.]', '', NR[0]))
+    NR1 = Decimal(sub(r'[^\d.]', '', NR[1]))
+    COGS0 = Decimal(sub(r'[^\d.]', '', COGS[0]))
+    COGS1 = Decimal(sub(r'[^\d.]', '', COGS[1]))
+
+    GM0 = NR0 - COGS0
+    GM1 = NR1 - COGS1
+
+    if GM0 > GM1:
+        return 1
+    else:
+        return 0
+
+def getAssetTurnoverRatio(ticker):
+    companyName = yf.Ticker(ticker)
+    companyName = companyName.info['shortName']
+    c = companyName.split(" ")
+    url = 'https://www.macrotrends.net/stocks/charts/' + ticker.upper() + '/' + c[0] + '/shares-outstanding'
+    response = Request(url, headers = headers)
+    webpage = urlopen(response).read()
+    table = pd.read_html(webpage, match='Annual Shares Outstanding')
+    df = pd.DataFrame(np.concatenate(table))
+    df.columns = ['Date', 'Shares']
+    SO0 = df.iloc[0][1]
+    SO1 = df.iloc[1][1]
+
+    if SO0 <= SO1:
+        return 1
+    else:
+        return 0
+
+c = getCOGS("AAPL")
+n = getNetRevenue("AAPL")
+getGrossMargin(n, c)
