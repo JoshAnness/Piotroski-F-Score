@@ -1,2 +1,3 @@
 # Piotroski F-Score
- Getting Piotroski's F-Score for investing 
+## Install Requirements
+`pip install -r requirements.txt`
