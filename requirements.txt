@@ -1,0 +1,9 @@
+requests
+json
+pandas 
+numpy
+bs4
+urllib.request
+yfinance 
+re
+decimal 
