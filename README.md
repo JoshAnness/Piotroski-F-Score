@@ -11,5 +11,5 @@ Number score between 0 and 9 illustrating the strength of a company's financial.
 9. Higher asset turnover ratio compared to previous year (1 point)
 ## Install Requirements
 `pip install -r requirements.txt`
-### Example
+## Example
 ![Capture](https://user-images.githubusercontent.com/46828931/152712186-eb0d908f-577b-4f3d-b596-8bf02a03c444.PNG)
