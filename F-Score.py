@@ -67,4 +67,10 @@ def main(ticker):
     print(totalScore)
     return dfFin
 
-df = main("AAPL")
+var = True
+while var:
+    stock = input("Enter the stock: ")
+    stock.upper()
+    if(stock != "QUIT"):
+        main(stock)
+        var = False
